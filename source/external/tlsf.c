@@ -1,4 +1,4 @@
-#include <assert.h>
+﻿#include <assert.h>
 #include <limits.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -215,12 +215,13 @@ enum tlsf_public
 enum tlsf_private
 {
 #if defined (TLSF_64BIT)
-	/* All allocation sizes and addresses are aligned to 8 bytes. */
+	/// Выравнивание в памяти по 8 байт (так как 64 разрадная система)
 	ALIGN_SIZE_LOG2 = 3,
 #else
-	/* All allocation sizes and addresses are aligned to 4 bytes. */
+	/// Выравнивание в памяти по 4 байта (так как 32 разрадная система)
 	ALIGN_SIZE_LOG2 = 2,
 #endif
+	/// Выравнивание в памяти. Зависит от разрядности системы
 	ALIGN_SIZE = (1 << ALIGN_SIZE_LOG2),
 
 	/*

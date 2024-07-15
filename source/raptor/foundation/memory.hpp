@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "foundation/platform.hpp"
 #include "foundation/service.hpp"
@@ -61,9 +61,9 @@ namespace raptor {
         void                        deallocate( void* pointer ) override;
 
         void*                       tlsf_handle;
-        void*                       memory;
-        sizet                       allocated_size = 0;
-        sizet                       max_size = 0;
+        void*                       memory;             /// Память для выделения
+        sizet                       allocated_size = 0; /// Объем уже выделенной памяти
+        sizet                       max_size = 0;       /// Объем всей памяти для выделения
         
     }; // struct HeapAllocator
 
@@ -162,8 +162,10 @@ namespace raptor {
         sizet                       maximum_dynamic_size = 32 * 1024 * 1024;    // Defaults to max 32MB of dynamic memory.
 
     }; // struct MemoryServiceConfiguration
-    //
-    //
+    
+    /**
+     * @brief Сервис управления памятью
+     */
     struct MemoryService : public Service {
 
         RAPTOR_DECLARE_SERVICE( MemoryService );
@@ -177,7 +179,7 @@ namespace raptor {
 
         // Frame allocator
         LinearAllocator             scratch_allocator;
-        HeapAllocator               system_allocator;
+        HeapAllocator               system_allocator;   /// Аллокатор кучи
 
         //
         // Test allocators.

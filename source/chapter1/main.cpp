@@ -1,4 +1,4 @@
-
+﻿
 #include "application/window.hpp"
 #include "application/input.hpp"
 #include "application/keys.hpp"
@@ -138,14 +138,14 @@ static u8* get_buffer_data( raptor::glTF::BufferView* buffer_views, u32 buffer_i
 
 int main( int argc, char** argv ) {
 
-    if ( argc < 2 ) {
-        printf( "Usage: chapter1 [path to glTF model]\n");
-        InjectDefault3DModel();
+    if ( argc < 2 ) {//
+        printf( "Usage: chapter1 [path to glTF model]\n");//
+        InjectDefault3DModel();//
     }
 
-    using namespace raptor;
+    using namespace raptor;//
     // Init services
-    MemoryService::instance()->init( nullptr );
+    MemoryService::instance()->init( nullptr );//
     time_service_init();
 
     Allocator* allocator = &MemoryService::instance()->system_allocator;
