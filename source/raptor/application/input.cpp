@@ -12,6 +12,8 @@
 #include <SDL.h>
 #endif // INPUT_BACKEND_SDL
 
+#pragma optimize("", off)
+
 namespace raptor {
 
 //
@@ -1039,3 +1041,5 @@ InputBinding& InputBinding::set_handles( InputHandle action_map, InputHandle act
 }
 
 } // namespace raptor
+
+#pragma optimize("", on)

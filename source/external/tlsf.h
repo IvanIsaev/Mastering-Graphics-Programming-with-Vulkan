@@ -70,6 +70,7 @@ size_t tlsf_block_size(void* ptr);
 
 /* Overheads/limits of internal structures. */
 size_t tlsf_size(void);
+size_t block_header_size(void);
 size_t tlsf_align_size(void);
 size_t tlsf_block_size_min(void);
 size_t tlsf_block_size_max(void);

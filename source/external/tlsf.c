@@ -7,6 +7,8 @@
 
 #include "tlsf.h"
 
+#pragma optimize("", off)
+
 #if defined(__cplusplus)
 #define tlsf_decl inline
 #else
@@ -204,9 +206,8 @@ tlsf_decl int tlsf_fls_sizet(size_t size)
 /* Public constants: may be modified. */
 enum tlsf_public
 {
-	/* log2 of number of linear subdivisions of block sizes. Larger
-	** values require more memory in the control structure. Values of
-	** 4 or 5 are typical.
+	/* 
+	* 2^SL_INDEX_COUNT_LOG2 - is a count of second-level lists
 	*/
 	SL_INDEX_COUNT_LOG2 = 5,
 };
@@ -215,13 +216,13 @@ enum tlsf_public
 enum tlsf_private
 {
 #if defined (TLSF_64BIT)
-	/// Выравнивание в памяти по 8 байт (так как 64 разрадная система)
+	/// Align in memory by 8 bytes (bcs 64-bit system)
 	ALIGN_SIZE_LOG2 = 3,
 #else
-	/// Выравнивание в памяти по 4 байта (так как 32 разрадная система)
+	/// Align in memory by 4 bytes (bcs 32-bit system)
 	ALIGN_SIZE_LOG2 = 2,
 #endif
-	/// Выравнивание в памяти. Зависит от разрядности системы
+	/// Align in memory. Depends on ALIGN_SIZE_LOG2
 	ALIGN_SIZE = (1 << ALIGN_SIZE_LOG2),
 
 	/*
@@ -244,11 +245,11 @@ enum tlsf_private
 #else
 	FL_INDEX_MAX = 30,
 #endif
-	SL_INDEX_COUNT = (1 << SL_INDEX_COUNT_LOG2),
-	FL_INDEX_SHIFT = (SL_INDEX_COUNT_LOG2 + ALIGN_SIZE_LOG2),
-	FL_INDEX_COUNT = (FL_INDEX_MAX - FL_INDEX_SHIFT + 1),
+	SL_INDEX_COUNT = (1 << SL_INDEX_COUNT_LOG2),/// count of indices in second-level list
+	FL_INDEX_SHIFT = (SL_INDEX_COUNT_LOG2 + ALIGN_SIZE_LOG2),/// shift in first-level list
+	FL_INDEX_COUNT = (FL_INDEX_MAX - FL_INDEX_SHIFT + 1),/// count of indices in first-level list
 
-	SMALL_BLOCK_SIZE = (1 << FL_INDEX_SHIFT),
+	SMALL_BLOCK_SIZE = (1 << FL_INDEX_SHIFT),/// small block size
 };
 
 /*
@@ -308,9 +309,8 @@ typedef struct block_header_t
 	/* The size of this block, excluding the block header. */
 	size_t size;
 
-	/* Next and previous free blocks. */
-	struct block_header_t* next_free;
-	struct block_header_t* prev_free;
+	struct block_header_t* next_free;/// next free block (valid only if block is free)
+	struct block_header_t* prev_free;/// previous free block (valid only if block is )
 } block_header_t;
 
 /*
@@ -348,9 +348,8 @@ typedef struct control_t
 	/* Empty lists point at this block to indicate they are free. */
 	block_header_t block_null;
 
-	/* Bitmaps for free lists. */
-	unsigned int fl_bitmap;
-	unsigned int sl_bitmap[FL_INDEX_COUNT];
+	unsigned int fl_bitmap;/// bit-map of first-level list
+	unsigned int sl_bitmap[FL_INDEX_COUNT];/// bit-map of second-level list
 
 	/* Head of free lists. */
 	block_header_t* blocks[FL_INDEX_COUNT][SL_INDEX_COUNT];
@@ -466,15 +465,29 @@ static void block_mark_as_used(block_header_t* block)
 	block_set_used(block);
 }
 
+/**
+ * @brief align memory to up
+ * @example if x = 15, align = 8, then returns 16
+ * @param x size for align
+ * @param align 
+ * @return 
+ */
 static size_t align_up(size_t x, size_t align)
 {
-	tlsf_assert(0 == (align & (align - 1)) && "must align to a power of two");
+	tlsf_assert(0 == (align & (align - 1)) && "must align to a power of two");/// Check that align is a power of 2
 	return (x + (align - 1)) & ~(align - 1);
 }
 
+/**
+ * @brief align memory to down
+ * @example if x = 17 align = 8, then returns 16
+ * @param x size for align
+ * @param align 
+ * @return 
+ */
 static size_t align_down(size_t x, size_t align)
 {
-	tlsf_assert(0 == (align & (align - 1)) && "must align to a power of two");
+	tlsf_assert(0 == (align & (align - 1)) && "must align to a power of two");/// Check that align is a power of 2
 	return x - (x & (align - 1));
 }
 
@@ -482,7 +495,7 @@ static void* align_ptr(const void* ptr, size_t align)
 {
 	const tlsfptr_t aligned =
 		(tlsf_cast(tlsfptr_t, ptr) + (align - 1)) & ~(align - 1);
-	tlsf_assert(0 == (align & (align - 1)) && "must align to a power of two");
+	tlsf_assert(0 == (align & (align - 1)) && "must align to a power of two");/// Check that align is a power of 2
 	return tlsf_cast(void*, aligned);
 }
 
@@ -948,6 +961,11 @@ size_t tlsf_size(void)
 	return sizeof(control_t);
 }
 
+size_t block_header_size(void)
+{
+	return sizeof(block_header_t);
+}
+
 size_t tlsf_align_size(void)
 {
 	return ALIGN_SIZE;
@@ -1263,3 +1281,5 @@ void* tlsf_realloc(tlsf_t tlsf, void* ptr, size_t size)
 
 	return p;
 }
+
+#pragma optimize("", on)

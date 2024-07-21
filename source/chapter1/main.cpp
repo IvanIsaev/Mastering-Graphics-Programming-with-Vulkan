@@ -146,19 +146,19 @@ int main( int argc, char** argv ) {
     using namespace raptor;//
     // Init services
     MemoryService::instance()->init( nullptr );//
-    time_service_init();
+    time_service_init();//
 
-    Allocator* allocator = &MemoryService::instance()->system_allocator;
+    Allocator* allocator = &MemoryService::instance()->system_allocator;//
 
-    StackAllocator scratch_allocator;
-    scratch_allocator.init( rmega( 8 ) );
+    StackAllocator scratch_allocator;//
+    scratch_allocator.init( rmega( 8 ) );//
 
     // window
-    WindowConfiguration wconf{ 1280, 800, "Raptor Test", allocator };
-    raptor::Window window;
-    window.init( &wconf );
+    WindowConfiguration wconf{ 1280, 800, "Raptor Test", allocator };//
+    raptor::Window window;//
+    window.init( &wconf );//
 
-    InputService input_handler;
+    InputService input_handler;//
     input_handler.init( allocator );
 
     // Callback register

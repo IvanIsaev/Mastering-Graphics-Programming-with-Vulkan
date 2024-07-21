@@ -179,7 +179,7 @@ namespace raptor {
 
         // Frame allocator
         LinearAllocator             scratch_allocator;
-        HeapAllocator               system_allocator;   /// Аллокатор кучи
+        HeapAllocator               system_allocator;   /// Heap allocator
 
         //
         // Test allocators.

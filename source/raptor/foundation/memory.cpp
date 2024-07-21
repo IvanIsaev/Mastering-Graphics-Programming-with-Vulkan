@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <memory.h>
 
+#pragma optimize("", off)
+
 #if defined RAPTOR_IMGUI
 #include "external/imgui/imgui.h"
 #endif // RAPTOR_IMGUI
@@ -48,7 +50,9 @@ MemoryService* MemoryService::instance() {
 //
 //
 void MemoryService::init( void* configuration ) {
-
+    const auto tlsfSize = tlsf_size();
+    const auto bhSize = block_header_size();
+    const auto intSize = sizeof(int);
     rprint( "Memory Service Init\n" );
     MemoryServiceConfiguration* memory_configuration = static_cast< MemoryServiceConfiguration* >( configuration );
     system_allocator.init( memory_configuration ? memory_configuration->maximum_dynamic_size : s_size );
@@ -454,3 +458,5 @@ void DoubleStackAllocator::clear_bottom() {
 }
 
 } // namespace raptor
+
+#pragma optimize("", on)
