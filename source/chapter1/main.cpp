@@ -159,15 +159,15 @@ int main( int argc, char** argv ) {
     window.init( &wconf );//
 
     InputService input_handler;//
-    input_handler.init( allocator );
+    input_handler.init( allocator );//
 
     // Callback register
-    window.register_os_messages_callback( input_os_messages_callback, &input_handler );
+    window.register_os_messages_callback( input_os_messages_callback, &input_handler );//
 
     // graphics
-    DeviceCreation dc;
-    dc.set_window( window.width, window.height, window.platform_handle ).set_allocator( allocator ).set_linear_allocator( &scratch_allocator );
-    GpuDevice gpu;
+    DeviceCreation dc;//
+    dc.set_window( window.width, window.height, window.platform_handle ).set_allocator( allocator ).set_linear_allocator( &scratch_allocator );//
+    GpuDevice gpu;//
     gpu.init( dc );
 
     ResourceManager rm;
